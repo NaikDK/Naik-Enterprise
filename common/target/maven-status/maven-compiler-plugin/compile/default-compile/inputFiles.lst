@@ -1,0 +1,11 @@
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/config/JwtSecurityConfig.java
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/config/MongoConfig.java
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/dto/ApiResponse.java
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/exception/AuthenticationException.java
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/exception/GlobalExceptionHandler.java
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/exception/UserAlreadyExistsException.java
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/exception/UserNotFoundException.java
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/exception/ValidationException.java
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/model/BaseEntity.java
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/security/JwtAuthenticationFilter.java
+/Users/deepnaik/Documents/Projects/naik-apps/common/src/main/java/org/naik/common/security/JwtValidator.java
