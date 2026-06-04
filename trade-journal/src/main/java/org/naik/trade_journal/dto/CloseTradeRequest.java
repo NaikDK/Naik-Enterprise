@@ -3,29 +3,17 @@ package org.naik.trade_journal.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 
 public class CloseTradeRequest{
 
-    @NotBlank
-    private String id;
-
-    @NotNull
+    @NotNull(message="Exit price is mandatory.")
     private BigDecimal exitPrice;
 
     private BigDecimal exitCommission;
 
     private LocalDateTime exitDate;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public BigDecimal getExitPrice() {
         return exitPrice;

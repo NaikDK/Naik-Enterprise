@@ -8,6 +8,7 @@ import org.naik.trade_journal.dto.CreateTradeRequest;
 import org.naik.trade_journal.dto.TradeResponse;
 import org.naik.trade_journal.service.TradeJournalService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,12 +18,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 
 
 
 @RestController
 @RequestMapping("/api/trades")
 @CrossOrigin(origins="*")
+@Validated
 public class TradeController {
     private final TradeJournalService tradeJournalService;
 
@@ -65,10 +69,10 @@ public class TradeController {
      * @return
      *  TradeResponse - includes all details of the trade 
      */
-    @PutMapping("close/{id}")
+    @PutMapping("/close/{id}")
     public ResponseEntity<ApiResponse<TradeResponse>> closeTrade(
         @PathVariable String id, 
-        @RequestBody CloseTradeRequest request) {
+        @Valid @RequestBody CloseTradeRequest request) {
         
         return ResponseEntity.ok(
             ApiResponse.success(
@@ -78,6 +82,11 @@ public class TradeController {
             )
         );
     }
+
+    /**
+     * Get all trades (open + closed), newest first.
+     * GET /api/trades/all
+     */
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<TradeResponse>>> getAllTrades() {

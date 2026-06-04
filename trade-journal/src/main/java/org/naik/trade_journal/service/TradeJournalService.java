@@ -24,6 +24,7 @@ public class TradeJournalService {
     public TradeResponse createTrade(CreateTradeRequest request){
         Trade trade = new Trade();
 
+        trade.setUserId(userId);
         trade.setTicker(request.getTicker().toUpperCase());
         trade.setType(request.getType());
         trade.setLots(request.getLots());
