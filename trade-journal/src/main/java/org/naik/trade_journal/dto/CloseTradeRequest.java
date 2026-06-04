@@ -3,9 +3,8 @@ package org.naik.trade_journal.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.mongodb.lang.NonNull;
-
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 
 public class CloseTradeRequest{
@@ -13,7 +12,7 @@ public class CloseTradeRequest{
     @NotBlank
     private String id;
 
-    @NonNull
+    @NotNull
     private BigDecimal exitPrice;
 
     private BigDecimal exitCommission;

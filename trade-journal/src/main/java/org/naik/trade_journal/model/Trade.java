@@ -1,6 +1,7 @@
 package org.naik.trade_journal.model;
 
 import java.math.BigDecimal;
+import static java.math.BigDecimal.ZERO;
 import java.time.LocalDateTime;
 
 import org.naik.common.model.BaseEntity;
@@ -53,13 +54,17 @@ public class Trade extends BaseEntity{
     }
 
     public BigDecimal getPnLPercent(){
+        BigDecimal totalComm = (entryCommission != null ? entryCommission : ZERO)
+        .add(exitCommission != null ? exitCommission : ZERO);
+
+        
         if(exitPrice == null) return BigDecimal.ZERO;
 
         BigDecimal diff = type == TradeType.BUY
             ? exitPrice.subtract(entryPrice)
             : entryPrice.subtract(exitPrice);
 
-        return diff.divide(entryPrice, 4, java.math.RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+        return diff.multiply(BigDecimal.valueOf(100)).subtract(totalComm);
     }
 
     public String getTicker() {
