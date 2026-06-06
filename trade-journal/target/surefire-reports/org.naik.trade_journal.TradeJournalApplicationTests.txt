@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.naik.trade_journal.TradeJournalApplicationTests
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.484 s -- in org.naik.trade_journal.TradeJournalApplicationTests
