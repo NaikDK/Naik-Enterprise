@@ -20,15 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
-
-
-
 @RestController
 @RequestMapping("/api/trades")
 @CrossOrigin(origins="*")
 @Validated
 public class TradeController {
     private final TradeJournalService tradeJournalService;
+    // To be replaced with user from JWT token
+    private static final String DEV_USER_ID = "dev-user";
 
     public TradeController(TradeJournalService tradeJournalService){
         this.tradeJournalService = tradeJournalService;
@@ -56,7 +55,7 @@ public class TradeController {
     public ResponseEntity<ApiResponse<TradeResponse>> createTrade(@RequestBody CreateTradeRequest reuqest) {
         return ResponseEntity.ok(
             ApiResponse.success(
-                "Trade created successfully!", tradeJournalService.createTrade(reuqest)
+                "Trade created successfully!", tradeJournalService.createTrade(DEV_USER_ID, reuqest)
             )
         );
     }
@@ -76,9 +75,7 @@ public class TradeController {
         
         return ResponseEntity.ok(
             ApiResponse.success(
-                "Trade closed successfully!", tradeJournalService.closeTrade(
-                    id, request
-                )
+                "Trade closed successfully!", tradeJournalService.closeTrade(DEV_USER_ID, id, request)
             )
         );
     }
@@ -92,7 +89,7 @@ public class TradeController {
     public ResponseEntity<ApiResponse<List<TradeResponse>>> getAllTrades() {
         return ResponseEntity.ok(
             ApiResponse.success(
-                tradeJournalService.getAllTrades()
+                tradeJournalService.getAllTrades(DEV_USER_ID)
             )
         );
     }
@@ -101,7 +98,7 @@ public class TradeController {
     public ResponseEntity<ApiResponse<List<TradeResponse>>> getOpenTrades() {
         return ResponseEntity.ok(
             ApiResponse.success(
-                tradeJournalService.getOpenTrades()
+                tradeJournalService.getOpenTrades(DEV_USER_ID)
             )
         );
     }
@@ -112,7 +109,7 @@ public class TradeController {
         
             return ResponseEntity.ok(
                 ApiResponse.success(
-                    tradeJournalService.getTradesByTicker(ticker)
+                    tradeJournalService.getTradesByTicker(DEV_USER_ID, ticker)
                 )
             );
     }
