@@ -23,7 +23,7 @@ public class JwtValidator {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String getUsernameFromToken(String token){
+    public String getUserIdFromToken(String token){
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()

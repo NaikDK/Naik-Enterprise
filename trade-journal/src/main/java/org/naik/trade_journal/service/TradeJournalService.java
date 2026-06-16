@@ -196,9 +196,7 @@ public class TradeJournalService {
  
         return summary;
 
-
     }
-
 
     public TradeResponse toResponse(Trade trade){
         TradeResponse tradeResponse = new TradeResponse();

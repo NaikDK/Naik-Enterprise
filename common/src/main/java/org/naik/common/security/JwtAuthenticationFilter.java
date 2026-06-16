@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
                     try {
                         if(jwtValidator.validateToken(token)){
-                            String username = jwtValidator.getUsernameFromToken(token);
+                            String userId = jwtValidator.getUserIdFromToken(token);
                             var roles = jwtValidator.getRolesFromToken(token);
 
                             var authorities = roles.stream()
@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                                 .collect(Collectors.toList());
                                 
                             UsernamePasswordAuthenticationToken authentication = 
-                                new UsernamePasswordAuthenticationToken(username, null, authorities);
+                                new UsernamePasswordAuthenticationToken(userId, null, authorities);
                             
                             authentication.setDetails(
                                 new WebAuthenticationDetailsSource().buildDetails(request));

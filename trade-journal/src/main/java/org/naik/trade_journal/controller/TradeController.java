@@ -8,6 +8,7 @@ import org.naik.trade_journal.dto.CreateTradeRequest;
 import org.naik.trade_journal.dto.TradeResponse;
 import org.naik.trade_journal.service.TradeJournalService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +27,14 @@ import jakarta.validation.Valid;
 @Validated
 public class TradeController {
     private final TradeJournalService tradeJournalService;
-    // To be replaced with user from JWT token
-    private static final String DEV_USER_ID = "dev-user";
+
+    private String getCurrentUserId(){
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || !authentication.isAuthenticated()){
+            throw new org.naik.common.exception.AuthenticationException("User not authenticated.");
+        }
+        return (String) authentication.getPrincipal();
+    }
 
     public TradeController(TradeJournalService tradeJournalService){
         this.tradeJournalService = tradeJournalService;
@@ -53,9 +60,10 @@ public class TradeController {
      */
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<TradeResponse>> createTrade(@RequestBody CreateTradeRequest reuqest) {
+        String userId = getCurrentUserId();
         return ResponseEntity.ok(
             ApiResponse.success(
-                "Trade created successfully!", tradeJournalService.createTrade(DEV_USER_ID, reuqest)
+                "Trade created successfully!", tradeJournalService.createTrade(userId, reuqest)
             )
         );
     }
@@ -72,10 +80,11 @@ public class TradeController {
     public ResponseEntity<ApiResponse<TradeResponse>> closeTrade(
         @PathVariable String id, 
         @Valid @RequestBody CloseTradeRequest request) {
+            String userId = getCurrentUserId();
         
         return ResponseEntity.ok(
             ApiResponse.success(
-                "Trade closed successfully!", tradeJournalService.closeTrade(DEV_USER_ID, id, request)
+                "Trade closed successfully!", tradeJournalService.closeTrade(userId, id, request)
             )
         );
     }
@@ -87,18 +96,20 @@ public class TradeController {
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<TradeResponse>>> getAllTrades() {
+        String userId = getCurrentUserId();
         return ResponseEntity.ok(
             ApiResponse.success(
-                tradeJournalService.getAllTrades(DEV_USER_ID)
+                tradeJournalService.getAllTrades(userId)
             )
         );
     }
 
     @GetMapping("/open")
     public ResponseEntity<ApiResponse<List<TradeResponse>>> getOpenTrades() {
+        String userId = getCurrentUserId();
         return ResponseEntity.ok(
             ApiResponse.success(
-                tradeJournalService.getOpenTrades(DEV_USER_ID)
+                tradeJournalService.getOpenTrades(userId)
             )
         );
     }
@@ -106,10 +117,10 @@ public class TradeController {
     @GetMapping("/ticker/{ticker}")
     public ResponseEntity<ApiResponse<List<TradeResponse>>> getTradesByTicker(
         @PathVariable String ticker) {
-        
+            String userId = getCurrentUserId();
             return ResponseEntity.ok(
                 ApiResponse.success(
-                    tradeJournalService.getTradesByTicker(DEV_USER_ID, ticker)
+                    tradeJournalService.getTradesByTicker(userId, ticker)
                 )
             );
     }
