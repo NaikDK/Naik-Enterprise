@@ -9,6 +9,16 @@
             "projectName": "auth-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-TradeJournalApplication<trade-journal>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "org.naik.trade_journal.TradeJournalApplication",
+            "projectName": "trade-journal",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

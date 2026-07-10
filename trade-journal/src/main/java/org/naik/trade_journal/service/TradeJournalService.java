@@ -84,7 +84,7 @@ public class TradeJournalService {
         trade.setExitDate(
             request.getExitDate() != null ? request.getExitDate() : LocalDateTime.now()
         );
-
+        trade.setStatus(TradeStatus.CLOSED);
         Trade saved = tradeRepository.save(trade);
         return toResponse(saved);
     }

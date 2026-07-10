@@ -36,7 +36,6 @@ public class CreateTradeRequest {
 
     private LocalDateTime entryDate;
 
-    @NotNull(message="Exit price is mandatory.")
     private BigDecimal exitPrice;
 
     private BigDecimal exitCommission;
