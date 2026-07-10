@@ -46,7 +46,7 @@ public class AuthController {
      *          400 - Bad request when the details are not valid
      *          409 - Conflict if username/Email already exist
      */
-    @GetMapping("/signup")
+    @PostMapping("/signup")
     public ResponseEntity<ApiResponse<AuthResponse>> signUp(@Valid @RequestBody SignUpRequest request) throws Exception {
         
         AuthResponse authResponse = authService.signUp(request);
@@ -62,7 +62,7 @@ public class AuthController {
      * @return
      * @throws Exception
      */
-    @GetMapping("/signin")
+    @PostMapping("/signin")
     public ResponseEntity<ApiResponse<AuthResponse>> signIn(@Valid @RequestBody SignInRequest request) throws Exception {
         
         AuthResponse authResponse = authService.signIn(request);

@@ -84,7 +84,7 @@ public class TradeJournalService {
         trade.setExitDate(
             request.getExitDate() != null ? request.getExitDate() : LocalDateTime.now()
         );
-
+        trade.setStatus(TradeStatus.CLOSED);
         Trade saved = tradeRepository.save(trade);
         return toResponse(saved);
     }
@@ -196,9 +196,7 @@ public class TradeJournalService {
  
         return summary;
 
-
     }
-
 
     public TradeResponse toResponse(Trade trade){
         TradeResponse tradeResponse = new TradeResponse();
@@ -206,16 +204,21 @@ public class TradeJournalService {
         tradeResponse.setId(trade.getId());
         tradeResponse.setTicker(trade.getTicker());
         tradeResponse.setType(trade.getType());
+        tradeResponse.setInstrumentType(trade.getInstrumentType());
         tradeResponse.setLots(trade.getLots());
+        tradeResponse.setStrike(trade.getStrike());
+        tradeResponse.setContractExpiry(trade.getContractExpiry());
         tradeResponse.setEntryPrice(trade.getEntryPrice());
         tradeResponse.setEntryCommission(trade.getEntryCommission());
         tradeResponse.setEntryDate(trade.getEntryDate());
         tradeResponse.setExitPrice(trade.getExitPrice());
         tradeResponse.setExitCommission(trade.getExitCommission());
         tradeResponse.setExitDate(trade.getExitDate());
+        tradeResponse.setStatus(trade.getStatus());
         tradeResponse.setNotes(trade.getNotes());
         tradeResponse.setPnL(trade.getPnL());
         tradeResponse.setPnLPercent(trade.getPnLPercent());
+        tradeResponse.setTotalCommission(trade.getTotalCommission());
 
         return tradeResponse;
     }

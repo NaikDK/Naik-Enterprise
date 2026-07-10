@@ -5,9 +5,11 @@ import java.util.List;
 import org.naik.common.dto.ApiResponse;
 import org.naik.trade_journal.dto.CloseTradeRequest;
 import org.naik.trade_journal.dto.CreateTradeRequest;
+import org.naik.trade_journal.dto.PortfolioSummary;
 import org.naik.trade_journal.dto.TradeResponse;
 import org.naik.trade_journal.service.TradeJournalService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,14 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
+
+
+
 @RestController
 @RequestMapping("/api/trades")
 @CrossOrigin(origins="*")
 @Validated
 public class TradeController {
     private final TradeJournalService tradeJournalService;
-    // To be replaced with user from JWT token
-    private static final String DEV_USER_ID = "dev-user";
 
     public TradeController(TradeJournalService tradeJournalService){
         this.tradeJournalService = tradeJournalService;
@@ -52,10 +55,13 @@ public class TradeController {
      *  TradeResponse with trade ID and other supplied details.
      */
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<TradeResponse>> createTrade(@RequestBody CreateTradeRequest reuqest) {
+    public ResponseEntity<ApiResponse<TradeResponse>> createTrade(
+    @Valid @RequestBody CreateTradeRequest reuqest, 
+    @AuthenticationPrincipal String userId
+    ) {
         return ResponseEntity.ok(
             ApiResponse.success(
-                "Trade created successfully!", tradeJournalService.createTrade(DEV_USER_ID, reuqest)
+                "Trade created successfully!", tradeJournalService.createTrade(userId, reuqest)
             )
         );
     }
@@ -71,11 +77,12 @@ public class TradeController {
     @PutMapping("/close/{id}")
     public ResponseEntity<ApiResponse<TradeResponse>> closeTrade(
         @PathVariable String id, 
-        @Valid @RequestBody CloseTradeRequest request) {
-        
+        @Valid @RequestBody CloseTradeRequest request,
+        @AuthenticationPrincipal String userId
+    ) {
         return ResponseEntity.ok(
             ApiResponse.success(
-                "Trade closed successfully!", tradeJournalService.closeTrade(DEV_USER_ID, id, request)
+                "Trade closed successfully!", tradeJournalService.closeTrade(userId, id, request)
             )
         );
     }
@@ -86,33 +93,71 @@ public class TradeController {
      */
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<TradeResponse>>> getAllTrades() {
+    public ResponseEntity<ApiResponse<List<TradeResponse>>> getAllTrades(
+        @AuthenticationPrincipal String userId
+    ) {
         return ResponseEntity.ok(
             ApiResponse.success(
-                tradeJournalService.getAllTrades(DEV_USER_ID)
+                tradeJournalService.getAllTrades(userId)
             )
         );
     }
 
     @GetMapping("/open")
-    public ResponseEntity<ApiResponse<List<TradeResponse>>> getOpenTrades() {
+    public ResponseEntity<ApiResponse<List<TradeResponse>>> getOpenTrades(
+        @AuthenticationPrincipal String userId
+    ) {
         return ResponseEntity.ok(
             ApiResponse.success(
-                tradeJournalService.getOpenTrades(DEV_USER_ID)
+                tradeJournalService.getOpenTrades(userId)
+            )
+        );
+    }
+    
+    @GetMapping("/closed")
+    public ResponseEntity<ApiResponse<List<TradeResponse>>> getClosedTrades(
+        @AuthenticationPrincipal String userId
+    ) {
+        return ResponseEntity.ok(
+            ApiResponse.success(
+                tradeJournalService.getClosedTrades(userId)
             )
         );
     }
     
     @GetMapping("/ticker/{ticker}")
     public ResponseEntity<ApiResponse<List<TradeResponse>>> getTradesByTicker(
-        @PathVariable String ticker) {
-        
+        @PathVariable String ticker, 
+        @AuthenticationPrincipal String userId
+    ) {
             return ResponseEntity.ok(
                 ApiResponse.success(
-                    tradeJournalService.getTradesByTicker(DEV_USER_ID, ticker)
+                    tradeJournalService.getTradesByTicker(userId, ticker)
                 )
             );
     }
     
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<TradeResponse>> getTradeById(
+        @PathVariable String id, 
+        @AuthenticationPrincipal String userId
+    ) {
+        return ResponseEntity.ok(
+            ApiResponse.success(
+                tradeJournalService.getTradeById(userId, id)
+            )
+        );
+    }
+    
+    @GetMapping("/portfolio")
+    public ResponseEntity<ApiResponse<PortfolioSummary>> getPortfoliosummary(
+        @AuthenticationPrincipal String userId
+    ) {
+        return ResponseEntity.ok(
+            ApiResponse.success(
+                tradeJournalService.getPortfolioSummary(userId)
+            )
+        );
+    }
     
 }

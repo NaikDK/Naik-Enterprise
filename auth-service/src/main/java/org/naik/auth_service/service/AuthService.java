@@ -11,10 +11,10 @@ import org.naik.auth_service.repository.UserRepository;
 import org.naik.auth_service.security.JwtUtil;
 import org.naik.common.exception.AuthenticationException;
 import org.naik.common.exception.UserAlreadyExistsException;
+import org.naik.common.security.JwtValidator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Service
 @Transactional
@@ -26,10 +26,13 @@ public class AuthService {
 
     private final JwtUtil jwtUtil;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passEncoder, JwtUtil jwtUtil) {
+    private final JwtValidator jwtValidator;
+
+    public AuthService(UserRepository userRepository, PasswordEncoder passEncoder, JwtUtil jwtUtil, JwtValidator jwtValidator) {
         this.userRepository = userRepository;
         this.passEncoder = passEncoder;
         this.jwtUtil = jwtUtil;
+        this.jwtValidator = jwtValidator;
     }
 
     public AuthResponse signUp(SignUpRequest request) throws Exception{
@@ -50,7 +53,7 @@ public class AuthService {
 
             user.setPhoneNumber(request.getPhoneNumber());
 
-            System.out.println(user);
+            // System.out.println(user);
 
             user = userRepository.save(user);
 
@@ -68,15 +71,10 @@ public class AuthService {
     }
 
     public AuthResponse signIn(SignInRequest request) throws Exception{
-        User user;
-
-        if(StringUtils.hasText(request.getUsername())){
-                user = userRepository.findByEmail(request.getUsername())
-                .orElseThrow(() -> new AuthenticationException("Incorrect user details. Please try again!"));
-        } else {
-            user = userRepository.findByUsername(request.getUsername())
+        
+        User user = userRepository.findByEmail(request.getUsername())
+            .or(() -> userRepository.findByUsername(request.getUsername()))
             .orElseThrow(() -> new AuthenticationException("Incorrect user details. Please try again!"));
-        }
 
         if (!passEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new AuthenticationException("Invalid username or password");
@@ -97,14 +95,14 @@ public class AuthService {
     }
 
     public TokenValidationResponse validateToken(String token){
-        if(!jwtUtil.validateJwtToken(token)){
+        if(!jwtValidator.validateToken(token)){
             return new TokenValidationResponse(false, null, null);
         }
 
-        String usesrId = jwtUtil.getUserIdFromToken(token);
+        String userId = jwtValidator.getUserIdFromToken(token);
 
-        Set<String> roles = jwtUtil.getRoelsFromToken(token);
+        Set<String> roles = jwtValidator.getRolesFromToken(token);
 
-        return new TokenValidationResponse(true, usesrId, roles);
+        return new TokenValidationResponse(true, userId, roles);
     }
 }
