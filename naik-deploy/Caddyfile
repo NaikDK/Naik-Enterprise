@@ -1,0 +1,27 @@
+# ─── Naik Org — Caddyfile ────────────────────────────────────────────────────
+# Add this to your existing Caddyfile on your bare metal Caddy instance
+# Domain: naikorg.home.arpa
+
+naikorg.home.arpa {
+
+    # ─── React UI (catch-all — must be last) ──────────────────────────────
+    handle /* {
+        reverse_proxy localhost:3000
+    }
+
+    # ─── Auth Service ─────────────────────────────────────────────────────
+    handle /auth/* {
+        reverse_proxy localhost:8080
+    }
+
+    # ─── Trade Journal API ────────────────────────────────────────────────
+    handle /journal/* {
+        reverse_proxy localhost:1111
+    }
+
+    # ─── Logging ──────────────────────────────────────────────────────────
+    log {
+        output file /var/log/caddy/naikorg.log
+        format json
+    }
+}

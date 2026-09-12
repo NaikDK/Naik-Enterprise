@@ -1,0 +1,24 @@
+services:
+  naik-ui:
+    image: naik-ui:latest
+    container_name: naik-ui
+    restart: unless-stopped
+    ports:
+      - "3000:80"       # Exposed to host so Caddy can reach it
+    networks:
+      - NaikNet
+    labels:
+      glance.name: "Trade Journal UI"
+      glance.description: "Naik Org trade journal React frontend"
+      glance.icon: "si:react"
+      glance.parent: "Naik Org"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+networks:
+  NaikNet:
+    external: true

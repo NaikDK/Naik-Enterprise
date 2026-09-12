@@ -1,0 +1,28 @@
+services:
+  naik-trade-journal:
+    image: naik-trade-journal:latest
+    container_name: naik-trade-journal
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      JWT_SECRET: ${JWT_SECRET}
+      SERVER_PORT_JOURNAL: 1111
+    ports:
+      - "1111:1111"     # Exposed to host so Caddy can reach it
+    networks:
+      - NaikNet
+    labels:
+      glance.name: "Trade Journal"
+      glance.description: "Naik Org trade journal API"
+      glance.icon: "si:spring"
+      glance.parent: "Naik Org"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:1111/journal/api/trades/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  NaikNet:
+    external: true
