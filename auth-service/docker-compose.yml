@@ -1,0 +1,26 @@
+services:
+  naik-auth:
+    image: naik-auth:latest
+    container_name: naik-auth
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:9080:8080" # localhost only — not exposed to home network
+    networks:
+      - NaikNet
+    labels:
+      glance.name: "Auth Service"
+      glance.description: "Naik Org authentication and user management"
+      glance.icon: "si:spring"
+      glance.parent: "Naik Org"
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8080/auth/api/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  NaikNet:
+    external: true

@@ -1,0 +1,31 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-alpine
+    container_name: jenkins
+    restart: unless-stopped
+    user: root # needed to access Docker socket
+    ports:
+      - "127.0.0.1:8090:8080" # Jenkins UI — localhost only
+      - "127.0.0.1:50000:50000" # Jenkins agent port
+    volumes:
+      - naik-jenkins-data:/var/jenkins_home # persist Jenkins data
+      - /var/run/docker.sock:/var/run/docker.sock # Docker socket access
+      - /usr/bin/docker:/usr/bin/docker # Docker binary
+      - /opt/naik:/opt/naik # deploy folder access
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    networks:
+      - NaikNet
+    labels:
+      glance.name: "Jenkins"
+      glance.description: "Naik Org CI/CD pipeline"
+      glance.icon: "si:jenkins"
+      glance.parent: "Naik Org"
+
+networks:
+  NaikNet:
+    external: true
+
+volumes:
+  naik-jenkins-data:
+    name: naik-jenkins-data

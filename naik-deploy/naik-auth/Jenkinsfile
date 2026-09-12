@@ -1,0 +1,108 @@
+// ─── Naik Org — Auth Service Pipeline ───────────────────────────────────────
+// Trigger: Manual (GitHub webhook auto-trigger added in Phase 7)
+// Runs on: Same server as Docker containers
+// Steps: Pull → Build JAR → Build Image → Deploy
+
+pipeline {
+
+    agent any
+
+    // ─── Pipeline-level environment variables ─────────────────────────────────
+    environment {
+        SERVICE_NAME    = 'naik-auth'
+        IMAGE_NAME      = 'naik-auth'
+        IMAGE_TAG       = "latest"
+        DEPLOY_DIR      = '/opt/naik/naik-auth'
+        GITHUB_REPO     = 'https://github.com/NaikDK/Naik-Enterprise.git'
+        SERVICE_DIR     = 'auth-service'    // subfolder inside repo
+    }
+
+    stages {
+
+        // ─── Stage 1: Pull latest code from GitHub ────────────────────────────
+        stage('Checkout') {
+            steps {
+                echo "Pulling latest code from GitHub..."
+                git(
+                    url: "${GITHUB_REPO}",
+                    branch: 'main',
+                    credentialsId: 'github-credentials'  // configured in Jenkins
+                )
+            }
+        }
+
+        // ─── Stage 2: Build JAR with Maven ───────────────────────────────────
+        stage('Build JAR') {
+            steps {
+                echo "Building auth-service JAR..."
+                dir("${SERVICE_DIR}") {
+                    sh '''
+                        mvn clean package -DskipTests \
+                            --no-transfer-progress \
+                            --batch-mode
+                    '''
+                }
+                echo "JAR built successfully"
+            }
+        }
+
+        // ─── Stage 3: Build Docker Image ─────────────────────────────────────
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
+                dir("${SERVICE_DIR}") {
+                    sh """
+                        docker build \
+                            --platform linux/amd64 \
+                            -t ${IMAGE_NAME}:${IMAGE_TAG} \
+                            .
+                    """
+                }
+                echo "Docker image built successfully"
+            }
+        }
+
+        // ─── Stage 4: Deploy Container ────────────────────────────────────────
+        stage('Deploy') {
+            steps {
+                echo "Deploying ${SERVICE_NAME}..."
+                sh """
+                    cd ${DEPLOY_DIR}
+                    docker compose down
+                    docker compose up -d
+                """
+                echo "Deployment complete"
+            }
+        }
+
+        // ─── Stage 5: Health Check ────────────────────────────────────────────
+        stage('Health Check') {
+            steps {
+                echo "Running health check..."
+                sh '''
+                    # Wait for Spring Boot to start
+                    sleep 20
+
+                    # Hit health endpoint
+                    curl -f http://localhost:9080/auth/api/health || exit 1
+                '''
+                echo "Health check passed ✅"
+            }
+        }
+    }
+
+    // ─── Post Actions ─────────────────────────────────────────────────────────
+    post {
+        success {
+            echo "✅ ${SERVICE_NAME} deployed successfully!"
+        }
+        failure {
+            echo "❌ Deployment failed — check logs above"
+            // Optional: add Slack/email notification here in Phase 7
+        }
+        always {
+            // Clean up old Docker images to save disk space
+            sh "docker image prune -f"
+        }
+    }
+}
