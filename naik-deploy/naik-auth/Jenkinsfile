@@ -17,6 +17,10 @@ pipeline {
         SERVICE_DIR     = 'auth-service'    // subfolder inside repo
     }
 
+    tools {
+        maven 'Maven-3.9'
+    }
+
     stages {
 
         // ─── Stage 1: Pull latest code from GitHub ────────────────────────────
