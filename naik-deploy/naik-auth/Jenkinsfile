@@ -36,33 +36,16 @@ pipeline {
             }
         }
 
-        // ─── Stage 2: Build JARs with Maven ───────────────────────────────────
-        stage('Install Common') {
+        // ─── Stage 2: Build All module JARs with Maven ───────────────────────────────────
+        stage('Build All Modules') {
             steps {
-                echo "Installing common module into local Maven repo..."
-                dir("${COMMON_DIR}") {
-                    sh '''
-                        mvn clean install -DskipTests \
-                            --no-transfer-progress \
-                            --batch-mode
-                    '''
-                }
-                echo "Common module installed ✅"
-            }
-        }
-
-        // ─── Stage 2.1: Build JAR with Maven ───────────────────────────────────
-        stage('Build Auth-Service JAR') {
-            steps {
-                echo "Building auth-service JAR..."
-                dir("${SERVICE_DIR}") {
-                    sh '''
-                        mvn clean package -DskipTests \
-                            --no-transfer-progress \
-                            --batch-mode
-                    '''
-                }
-                echo "JAR built successfully"
+                echo "Building all modules from root..."
+                sh '''
+                    mvn clean install -DskipTests \
+                        --no-transfer-progress \
+                        --batch-mode
+                '''
+                echo "All modules built ✅"
             }
         }
 
