@@ -14,6 +14,7 @@ pipeline {
         IMAGE_TAG       = "latest"
         DEPLOY_DIR      = '/opt/naik/naik-auth'
         GITHUB_REPO     = 'https://github.com/NaikDK/Naik-Enterprise.git'
+        COMMON_DIR      = 'common'
         SERVICE_DIR     = 'auth-service'    // subfolder inside repo
     }
 
@@ -35,8 +36,23 @@ pipeline {
             }
         }
 
-        // ─── Stage 2: Build JAR with Maven ───────────────────────────────────
-        stage('Build JAR') {
+        // ─── Stage 2: Build JARs with Maven ───────────────────────────────────
+        stage('Install Common') {
+            steps {
+                echo "Installing common module into local Maven repo..."
+                dir("${COMMON_DIR}") {
+                    sh '''
+                        mvn clean install -DskipTests \
+                            --no-transfer-progress \
+                            --batch-mode
+                    '''
+                }
+                echo "Common module installed ✅"
+            }
+        }
+
+        // ─── Stage 2.1: Build JAR with Maven ───────────────────────────────────
+        stage('Build Auth-Service JAR') {
             steps {
                 echo "Building auth-service JAR..."
                 dir("${SERVICE_DIR}") {
