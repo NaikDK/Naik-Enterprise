@@ -87,7 +87,7 @@ pipeline {
                     sleep 20
 
                     # Hit health endpoint
-                    curl -f http://naik-auth:9080/auth/api/health || exit 1
+                    curl -f http://naik-auth:8080/auth/api/health || exit 1
                 '''
                 echo "Health check passed ✅"
             }
